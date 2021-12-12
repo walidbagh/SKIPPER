@@ -11,5 +11,9 @@ pyinquirer = "==1.0.3"
 python = "^3.8"
 rsa = "==4.0"
 tqdm = "==4.36.1"
+<<<<<<< HEAD
 lxml = "^4.6.4"
 requests = "^2.26.0"
+=======
+cachetools = "^4.2.4"
+>>>>>>> b95d5153760869c2cb77735c1c23e289ec17c36d

@@ -19,15 +19,15 @@ logger = logging.getLogger(__name__)
 
 def skipperStart(novel_id, chapters, use_proxies):
     print(f'CPU count: {os.cpu_count()}\n')
-    threads_number = 10
+    threads_number = 2
     proxiesGetter.get(use_proxies)
-    print(f'Seeding \033[92m{novel_id}\033[0m combos with {threads_number} threads and {len(proxiesGetter.proxies)} proxies.\n')
+    print(f'Seeding novel \033[92m{novel_id}\033[0m with {threads_number} threads and {len(proxiesGetter.proxies)} proxies.\n')
     with ThreadPoolExecutor(threads_number) as executor:
-      futures = [executor.submit(webnovelBot, novel_id, chapters) for i in range(100)]
+      futures = [executor.submit(webnovelBot, novel_id, chapters) for i in range(50)]
       with std_out_err_redirect_tqdm() as orig_stdout:
         with tqdm(total=len(futures), unit='req', file=orig_stdout, dynamic_ncols=True, postfix=f'{len(proxiesGetter.proxies)} proxies © SKIPPER 2021 by \033[92m@NetD0G\033[0m\033[0m.', unit_scale=True) as pbar:
-          pbar.set_postfix({'proxies': len(proxiesGetter.proxies)})
           for future in as_completed(futures):
+            pbar.set_postfix_str(f'{len(proxiesGetter.proxies)} proxies © SKIPPER 2021 by \033[92m@NetD0G\033[0m\033[0m.', refresh=True)
             try:
               result = future.result()
               if result:

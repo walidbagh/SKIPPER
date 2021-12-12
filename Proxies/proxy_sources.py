@@ -22,7 +22,7 @@ def print_page_progress(page = 1, num_pages = 1):
 def source_1():
   print_download()
   proxies = set()
-  url = 'https://free-proxy-list.net/'
+  url = 'https://www.sslproxies.org/'
   response = requests.get(url)
   parser = fromstring(response.text)
   for i in parser.xpath('//tbody/tr')[:250]:
@@ -80,4 +80,8 @@ def source_2():
   except:
     print_error()
   return proxies
-    
+
+def source_3():
+  print_download()
+  proxies = set()
+  
