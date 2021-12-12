@@ -2,7 +2,6 @@ import requests
 import logging
 import threading
 import random
-
 import Proxies.proxiesGetter as proxiesGetter
 from utils import wait
 
@@ -15,11 +14,11 @@ class webnovelBot():
     self.novel_id = novel_id
     # at least 3 chapters, if chapters list has less then 3, it will eventually get the max
     number_of_chapters = random.randrange(3, len(chapters)-1)
-    if number_of_chapters > 20:
-      # 60% of the time, we limit the chapters number to less than 20
+    if number_of_chapters > 10:
+      # 60% of the time, we limit the chapters number to less than 10
       # random.choices() returns list, so access the result in index 0
       if random.choices([True, False], weights=[0.7, 0.3])[0]:
-        number_of_chapters = random.randrange(10, 19)
+        number_of_chapters = random.randrange(7, 10)
     self.chapters = chapters[:number_of_chapters]
     self.chapter_index = 0
     self.check()
@@ -62,5 +61,9 @@ class webnovelBot():
     except Exception as e:
         logging.exception(str(e))
         print(f"[#{self.threadName}] \033[93mConnnection error! Skipping proxy and retrying...\033[0m\n")
-        proxiesGetter.proxies.delete_prev()
+        try:
+          proxiesGetter.proxies.remove(proxy)
+        except ValueError as e:
+          logging.exception(str(e))
+          print(f"[#{self.threadName}] \033[93m Couldn't remove proxy, not found...\033[0m\n")
         self.check(True)

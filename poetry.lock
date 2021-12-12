@@ -1,4 +1,12 @@
 [[package]]
+name = "cachetools"
+version = "4.2.4"
+description = "Extensible memoizing collections and decorators"
+category = "main"
+optional = false
+python-versions = "~=3.5"
+
+[[package]]
 name = "fake-useragent"
 version = "0.1.11"
 description = "Up to date simple useragent faker with real world database"
@@ -110,9 +118,13 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "801b4b105445ca30afcaf3d8aff7632f300a44a33514d22b285dc3d69078573d"
+content-hash = "3613ee36a6ccf0f3b617db3c950736303c9e8fda500215cca6ffc3f3f8cd608b"
 
 [metadata.files]
+cachetools = [
+    {file = "cachetools-4.2.4-py3-none-any.whl", hash = "sha256:92971d3cb7d2a97efff7c7bb1657f21a8f5fb309a37530537c71b1774189f2d1"},
+    {file = "cachetools-4.2.4.tar.gz", hash = "sha256:89ea6f1b638d5a73a4f9226be57ac5e4f399d22770b92355f92dcb0f7f001693"},
+]
 fake-useragent = [
     {file = "fake-useragent-0.1.11.tar.gz", hash = "sha256:c104998b750eb097eefc28ae28e92d66397598d2cf41a31aa45d5559ef1adf35"},
 ]
