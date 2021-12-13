@@ -31,7 +31,7 @@ def get_parameters():
             'type': 'confirm',
             'message': 'Boost first chapter only ?',
             'name': 'boost_first_chapter_only',
-            'default': True,
+            'default': False,
         },
     ]
     return prompt(questions)

@@ -20,10 +20,10 @@ class webnovelBot():
       # at least 3 chapters, if chapters list has less then 3, it will eventually get the max
       number_of_chapters = random.randrange(3, len(chapters)-1)
       if number_of_chapters > 10:
-        # 60% of the time, we limit the chapters number to less than 10
+        # 90% of the time, we limit the chapters number to less than 10
         # random.choices() returns list, so access the result in index 0
-        if random.choices([True, False], weights=[0.7, 0.3])[0]:
-          number_of_chapters = random.randrange(7, 10)
+        if random.choices([True, False], weights=[0.9, 0.1])[0]:
+          number_of_chapters = random.randrange(3, 7)
 
     self.chapters = chapters[:number_of_chapters]
     self.chapter_index = 0
@@ -41,13 +41,17 @@ class webnovelBot():
     print(f'\n[#{self.threadName}] Trying chapter {self.chapter_index + 1}/{len(self.chapters)} ' + (f'with proxy {proxy}.' if proxiesGetter.proxies else 'without proxy.'))
     try:
         api = requests.session()
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36",
+        }
         response = api.get(
             f'https://www.webnovel.com/book/{self.novel_id}/{self.chapters[self.chapter_index]["id"]}',
+            headers=headers,
             proxies={
               "http": f'http://{proxy}',
               "https": f'http://{proxy}'
             },
-            timeout=(10, 20),
+            timeout=(5, 10),
             verify=False
         )
         if response.status_code == 200:

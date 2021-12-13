@@ -52,8 +52,9 @@ def get(use_proxies, filter_bad_proxies):
   global proxies
   proxies = set()
   if(use_proxies):
-    for i in (1,2):
+    for i in (1,2,3,4):
       proxies.update(getattr(proxy_sources, 'source_%d' % i)())
+    print(f'Found \033[92m{len(proxies)}\033[0m Unique Proxies.\n')
     if filter_bad_proxies:
       with ThreadPoolExecutor(15) as executor:
         session = requests.session()

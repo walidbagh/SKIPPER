@@ -1,6 +1,7 @@
 import os
 import rsa
 import json
+from time import time, sleep
 from base64 import b64decode
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -16,14 +17,25 @@ from utils import banner, std_out_err_redirect_tqdm
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename = 'app.log')
 logger = logging.getLogger(__name__)
 
+threads_number = 20
+requests_per_cycle = 50
+time_per_cycle = 60 # 1 minute
+start_time = int(time())
+cycle_count = 1
 
 def skipperStart(novel_id, chapters, boost_first_chapter_only, use_proxies, filter_bad_proxies):
-    print(f'CPU count: {os.cpu_count()}\n')
-    threads_number = 5
+    global start_time
+    global cycle_count
     proxiesGetter.get(use_proxies, filter_bad_proxies)
-    print(f'Seeding novel \033[92m{novel_id}\033[0m with {threads_number} threads and {len(proxiesGetter.proxies)} proxies.\n')
+    if int(time()) - start_time >= time_per_cycle:
+      start_time = int(time())
+    else:
+      for secs in range(int(time()) - start_time, 0, -1):
+        print(f'Waiting {secs} seconds to start new cycle...', end='\r')
+        sleep(1)
+    print(f'Cycle #{cycle_count}: Seeding novel \033[92m{novel_id}\033[0m with {threads_number} threads and {len(proxiesGetter.proxies)} proxies.\n')
     with ThreadPoolExecutor(threads_number) as executor:
-      futures = [executor.submit(webnovelBot, novel_id, chapters, boost_first_chapter_only) for i in range(50)]
+      futures = [executor.submit(webnovelBot, novel_id, chapters, boost_first_chapter_only) for i in range(requests_per_cycle)]
       with std_out_err_redirect_tqdm() as orig_stdout:
         with tqdm(total=len(futures), unit='req', file=orig_stdout, dynamic_ncols=True, postfix=f'{len(proxiesGetter.proxies)} proxies © SKIPPER 2021 by \033[92m@NetD0G\033[0m\033[0m.', unit_scale=True) as pbar:
           for future in as_completed(futures):
@@ -40,7 +52,7 @@ def skipperStart(novel_id, chapters, boost_first_chapter_only, use_proxies, filt
               print(f'generated an exception: {exc}')
           pbar.close()
     skipperStart(novel_id, chapters, boost_first_chapter_only, use_proxies, filter_bad_proxies)
-      
+
 
 def check_licence():
   pk = """-----BEGIN RSA PUBLIC KEY-----
@@ -75,7 +87,7 @@ def main():
     banner()
     check_licence()
     answers = get_parameters()
-    print()
+    print(f'CPU count: {os.cpu_count()}\n')
     chapters = json.load(open(answers['chapters_file_path']))
     if(len(chapters) != 0):
       skipperStart(answers['novel_id'], chapters, answers['boost_first_chapter_only'], answers['use_proxies'], answers['filter_bad_proxies'])
