@@ -20,17 +20,18 @@ logger = logging.getLogger(__name__)
 threads_number = 20
 requests_per_cycle = 50
 time_per_cycle = 60 # 1 minute
-start_time = int(time())
+start_time = 0
 cycle_count = 1
 
 def skipperStart(novel_id, chapters, boost_first_chapter_only, use_proxies, filter_bad_proxies):
     global start_time
     global cycle_count
     proxiesGetter.get(use_proxies, filter_bad_proxies)
-    if int(time()) - start_time >= time_per_cycle:
+    last_cycle_duration = int(time()) - start_time
+    if last_cycle_duration >= time_per_cycle:
       start_time = int(time())
     else:
-      for secs in range(int(time()) - start_time, 0, -1):
+      for secs in range(abs(last_cycle_duration - time_per_cycle), 0, -1):
         print(f'Waiting {secs} seconds to start new cycle...', end='\r')
         sleep(1)
     print(f'Cycle #{cycle_count}: Seeding novel \033[92m{novel_id}\033[0m with {threads_number} threads and {len(proxiesGetter.proxies)} proxies.\n')

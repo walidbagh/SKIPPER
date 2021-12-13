@@ -20,9 +20,9 @@ class webnovelBot():
       # at least 3 chapters, if chapters list has less then 3, it will eventually get the max
       number_of_chapters = random.randrange(3, len(chapters)-1)
       if number_of_chapters > 10:
-        # 90% of the time, we limit the chapters number to less than 10
+        # 98% of the time, we limit the chapters number to less than 10
         # random.choices() returns list, so access the result in index 0
-        if random.choices([True, False], weights=[0.9, 0.1])[0]:
+        if random.choices([True, False], weights=[0.98, 0.02])[0]:
           number_of_chapters = random.randrange(3, 7)
 
     self.chapters = chapters[:number_of_chapters]
