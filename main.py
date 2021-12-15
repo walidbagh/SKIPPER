@@ -2,6 +2,7 @@ import os
 import rsa
 import json
 from time import time, sleep
+from datetime import timedelta
 from base64 import b64decode
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -20,12 +21,15 @@ logger = logging.getLogger(__name__)
 threads_number = 20
 requests_per_cycle = 50
 time_per_cycle = 60 # 1 minute
+skipper_start_time = int(time())
 start_time = 0
 cycle_count = 1
+views_boosted = 0
 
 def skipperStart(novel_id, chapters, boost_first_chapter_only, use_proxies, filter_bad_proxies):
     global start_time
     global cycle_count
+    global views_boosted
     proxiesGetter.get(use_proxies, filter_bad_proxies)
     last_cycle_duration = int(time()) - start_time
     if last_cycle_duration >= time_per_cycle:
@@ -45,6 +49,7 @@ def skipperStart(novel_id, chapters, boost_first_chapter_only, use_proxies, filt
               result = future.result()
               if result:
                 pbar.update(1)
+                views_boosted += 1
               else:
                 # Clear proxies cache to force get new ones
                 proxiesGetter.cache.clear()
@@ -91,7 +96,11 @@ def main():
     print(f'CPU count: {os.cpu_count()}\n')
     chapters = json.load(open(answers['chapters_file_path']))
     if(len(chapters) != 0):
-      skipperStart(answers['novel_id'], chapters, answers['boost_first_chapter_only'], answers['use_proxies'], answers['filter_bad_proxies'])
+      try:
+        skipperStart(answers['novel_id'], chapters, answers['boost_first_chapter_only'], answers['use_proxies'], answers['filter_bad_proxies'])
+      except KeyboardInterrupt:
+        print('Stop requested by user...\n')
+        print(f'Boosted novel {answers["novel_id"]} with {views_boosted} views during {str(timedelta(seconds=int(time())-skipper_start_time))}.\n')
     else:
       print('Nothing to do! Exiting...')
 
