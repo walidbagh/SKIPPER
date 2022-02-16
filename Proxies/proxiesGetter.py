@@ -32,6 +32,14 @@ class ModifiableCycle(object):
         self.deque.remove(item)
     remove = __remove__
 
+def format_proxy(proxy):
+  p = proxy.split(':')
+  if len(p) == 2:
+    return proxy
+  else:
+    # Proxies that have authentication user:pass
+    return f'{p[2]}:{p[3]}@{p[0]}:{p[1]}'
+
 def check_proxy(session, proxy):
     try:
         response = session.get(
@@ -48,12 +56,20 @@ def check_proxy(session, proxy):
         return False
 
 @cached(cache)
-def get(use_proxies, filter_bad_proxies):
+def get(use_proxies, use_local_proxies_only, filter_bad_proxies):
   global proxies
   proxies = set()
   if(use_proxies):
-    for i in (1,2,3,4):
-      proxies.update(getattr(proxy_sources, 'source_%d' % i)())
+    # Local proxies
+    lines = open('proxies.txt', "r").readlines()
+    #local_proxies = [":".join(line.replace("\n", "").split(":", 2)[:2]) for line in lines]
+    local_proxies = [format_proxy(line.replace("\n", "")) for line in lines]
+    proxies.update(local_proxies)
+    print(f'Found \033[92m{len(local_proxies)}\033[0m Proxies from source #Local.\n')
+    # Remote FREE proxies
+    if not use_local_proxies_only:
+      for i in (1,2,3,4):
+        proxies.update(getattr(proxy_sources, 'source_%d' % i)())
     print(f'Found \033[92m{len(proxies)}\033[0m Unique Proxies.\n')
     if filter_bad_proxies:
       with ThreadPoolExecutor(15) as executor:

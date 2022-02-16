@@ -35,10 +35,11 @@ def source_1():
         parser = fromstring(response.text)
         for i in parser.xpath('//tbody/tr')[:250]:
             if i.xpath('.//td[7][contains(text(),"yes")]'):
-                proxy = ":".join(
-                    [i.xpath('.//td[1]/text()')[0],
-                     i.xpath('.//td[2]/text()')[0]])
-                proxies.add(proxy)
+                if i.xpath('.//td[5][contains(text(),"elite proxy")]'):
+                    proxy = ":".join(
+                        [i.xpath('.//td[1]/text()')[0],
+                        i.xpath('.//td[2]/text()')[0]])
+                    proxies.add(proxy)
         print_count(len(proxies))
     except:
         print_error()

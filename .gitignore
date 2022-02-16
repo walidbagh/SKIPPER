@@ -145,4 +145,14 @@ cython_debug/
 # Log file
 *.log
 debug.txt
+
+# Local Proxies
+proxies.txt
+
+# Accounts combos
+wattpad.txt
+webnovel.txt
+
+# Playwright screenshots
+screenshots/
 # End of https://www.toptal.com/developers/gitignore/api/python
